@@ -12,6 +12,7 @@ import { PAYLOAD_TYPES, buildPayload } from "@/lib/payload";
 import { cn } from "@/lib/utils";
 
 const PRINT_PALETTE = { black: "#000000", white: "#ffffff", red: "#d71932", green: "#087f3e", blue: "#174ea6" };
+const QR_SIZE_OPTIONS = [512, 720, 900, 1200, 1600];
 
 const STYLES = [
   { id: "classic", label: "Classic" },
@@ -49,6 +50,7 @@ export default function GeneratorPanel() {
   const [type, setType] = useState("link");
   const [values, setValues] = useState({ url: "", text: "", email: "", subject: "", message: "", phone: "", smsMessage: "" });
   const [style, setStyle] = useState("classic");
+  const [imageSize, setImageSize] = useState(900);
   const [highDensity, setHighDensity] = useState(false);
   const [outputMode, setOutputMode] = useState("screen");
   const [clearLogoBackground, setClearLogoBackground] = useState(true);
@@ -75,7 +77,7 @@ export default function GeneratorPanel() {
           compression: "auto"
         });
         const nextSvg = renderToSVG(code, {
-          imageSize: 900,
+          imageSize,
           quietZone: 2,
           style,
           // QuadQR print mode intentionally clamps the quiet zone to 4 modules.
@@ -105,7 +107,7 @@ export default function GeneratorPanel() {
       }
     }, 120);
     return () => window.clearTimeout(timer);
-  }, [payload, style, highDensity, outputMode, logoDataUrl, clearLogoBackground]);
+  }, [payload, style, imageSize, highDensity, outputMode, logoDataUrl, clearLogoBackground]);
 
   function chooseLogo(event) {
     const file = event.target.files?.[0];
@@ -138,8 +140,8 @@ export default function GeneratorPanel() {
     const image = new Image();
     image.onload = () => {
       const canvas = document.createElement("canvas");
-      canvas.width = 1200;
-      canvas.height = 1200;
+      canvas.width = imageSize;
+      canvas.height = imageSize;
       const ctx = canvas.getContext("2d");
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -153,8 +155,6 @@ export default function GeneratorPanel() {
     };
     image.src = svgUrl;
   }
-
-  const previewSrc = svg ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}` : "";
 
   return (
     <div className="grid min-w-0 gap-4 lg:grid-cols-[1.05fr_.95fr] lg:gap-5">
@@ -232,6 +232,21 @@ export default function GeneratorPanel() {
                 <Switch checked={highDensity} onCheckedChange={setHighDensity} />
               </label>
               <div>
+                <p className="mb-2 text-sm font-semibold text-foreground">QR size</p>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+                  {QR_SIZE_OPTIONS.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setImageSize(size)}
+                      className={cn("rounded-xl border px-2 py-2.5 text-sm font-semibold", imageSize === size ? "border-primary bg-background text-foreground" : "border-transparent bg-muted text-muted-foreground hover:text-foreground")}
+                    >
+                      {size}px
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
                 <p className="mb-2 text-sm font-semibold text-foreground">Output</p>
                 <div className="grid grid-cols-2 gap-2">
                   <button onClick={() => setOutputMode("screen")} className={cn("rounded-xl border px-3 py-2.5 text-sm font-semibold", outputMode === "screen" ? "border-primary bg-background text-foreground" : "border-transparent bg-muted text-muted-foreground hover:text-foreground")}>Screen</button>
@@ -253,7 +268,16 @@ export default function GeneratorPanel() {
         </div>
 
         <div className="checker-bg mx-auto mt-4 flex aspect-square w-full max-w-[22rem] items-center justify-center overflow-hidden rounded-2xl border border-border bg-background p-4 sm:mt-5 sm:max-w-none sm:rounded-3xl sm:p-8">
-          {previewSrc ? <img src={previewSrc} alt="Generated QuadQR preview" className="h-full w-full object-contain" /> : <div className="max-w-xs text-center text-sm leading-6 text-muted-foreground">Add content to see your QuadQR.</div>}
+          {svg ? (
+            <div
+              aria-label="Generated QuadQR preview"
+              className="quadqr-preview-svg h-full w-full"
+              role="img"
+              dangerouslySetInnerHTML={{ __html: svg }}
+            />
+          ) : (
+            <div className="max-w-xs text-center text-sm leading-6 text-muted-foreground">Add content to see your QuadQR.</div>
+          )}
         </div>
         {error ? <p className="mt-3 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p> : null}
 
@@ -261,7 +285,7 @@ export default function GeneratorPanel() {
           <Button onClick={downloadPng} disabled={!svg}><Download className="size-4" />PNG</Button>
           <Button onClick={downloadSvg} disabled={!svg} variant="outline"><Download className="size-4" />SVG</Button>
         </div>
-        <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">Optimized automatically with compression and a fixed 2-module quiet area.</p>
+        <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">Exports at {imageSize}px with compression and a fixed 2-module quiet area.</p>
       </aside>
     </div>
   );

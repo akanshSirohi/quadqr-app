@@ -7,62 +7,8 @@ import { Button } from "@/components/ui/button";
 import ScanResultDialog from "@/components/scan-result-dialog";
 import { classifyPayload } from "@/lib/payload";
 
-function fitCanvas(canvas) {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const width = Math.max(1, Math.round(rect.width * dpr));
-  const height = Math.max(1, Math.round(rect.height * dpr));
-  if (canvas.width !== width || canvas.height !== height) {
-    canvas.width = width;
-    canvas.height = height;
-  }
-  return { width, height, dpr };
-}
-
-function drawFinderOverlay(canvas, event) {
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  const { width, height, dpr } = fitCanvas(canvas);
-  ctx.clearRect(0, 0, width, height);
-
-  const finders = Array.isArray(event?.finders) ? event.finders.slice(0, 3) : [];
-  const scanWidth = Number(event?.scanWidth) || 0;
-  const scanHeight = Number(event?.scanHeight) || 0;
-  if (!finders.length || !scanWidth || !scanHeight) return;
-
-  const sx = width / scanWidth;
-  const sy = height / scanHeight;
-  const points = finders.map((finder) => ({
-    x: Number(finder.x) * sx,
-    y: Number(finder.y) * sy,
-    size: Math.max(20 * dpr, Number(finder.moduleSize || 4) * 7 * ((sx + sy) / 2))
-  })).filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
-
-  if (points.length >= 2) {
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
-    if (points.length === 3) ctx.closePath();
-    ctx.lineWidth = Math.max(2, 2 * dpr);
-    ctx.strokeStyle = "rgba(255,255,255,.92)";
-    ctx.shadowColor = "rgba(15,23,42,.4)";
-    ctx.shadowBlur = 5 * dpr;
-    ctx.stroke();
-  }
-
-  ctx.shadowBlur = 4 * dpr;
-  for (const point of points) {
-    ctx.strokeStyle = "rgba(255,255,255,.98)";
-    ctx.lineWidth = Math.max(2, 2.2 * dpr);
-    const size = point.size;
-    ctx.strokeRect(point.x - size / 2, point.y - size / 2, size, size);
-  }
-  ctx.shadowBlur = 0;
-}
-
 export default function ScannerPanel() {
   const videoRef = useRef(null);
-  const overlayRef = useRef(null);
   const scannerRef = useRef(null);
   const fileRef = useRef(null);
   const [cameraState, setCameraState] = useState("idle");
@@ -102,10 +48,7 @@ export default function ScannerPanel() {
     try {
       const scanner = await startCameraScanner(videoRef.current, {
         cameraWorker: true,
-        onResult: handleDecoded,
-        onDiagnostic(event) {
-          if (event?.type === "frame" || event?.finders) drawFinderOverlay(overlayRef.current, event);
-        }
+        onResult: handleDecoded
       });
       scannerRef.current = scanner;
       setCameraState("scanning");
@@ -162,7 +105,6 @@ export default function ScannerPanel() {
             muted
             playsInline
           />
-          <canvas ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" />
           {!isLive ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
               <div className="flex size-14 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-white/15 sm:size-16 sm:rounded-3xl">

@@ -216,6 +216,17 @@
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
 }
 
+.quadqr-preview-svg,
+.quadqr-preview-svg svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.quadqr-preview-svg svg {
+  max-width: none;
+}
+
 .safe-bottom {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
