@@ -1,5 +1,7 @@
 import { BASE_PATH } from "@/lib/base-path";
 
+export const dynamic = "force-static";
+
 export default function manifest() {
   return {
     name: "QuadQR - Create & Scan",
