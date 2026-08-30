@@ -28,5 +28,5 @@ const env = { ...process.env, NEXT_PUBLIC_BASE_PATH: basePath };
 console.log(`Building for GitHub Pages at ${basePath || "/"}`);
 run("npx", ["next", "build"], env);
 if (existsSync("out")) writeFileSync("out/.nojekyll", "");
-run("npx", ["gh-pages", "-d", "out", "-t", "true"], env);
+run("npx", ["gh-pages", "-d", "out", "--dotfiles", "--nojekyll"], env);
 console.log("Published to the gh-pages branch.");

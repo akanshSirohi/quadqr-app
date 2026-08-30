@@ -46,18 +46,18 @@ export default function InstallButton() {
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={install} className="bg-white/70">
+      <Button variant="outline" size="sm" onClick={install} className="bg-background/70">
         <Download className="size-3.5" />
         Install app
       </Button>
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
         <DialogContent>
-          <div className="mb-4 flex size-11 items-center justify-center rounded-2xl bg-slate-100">
+          <div className="mb-4 flex size-11 items-center justify-center rounded-2xl bg-muted">
             <Share2 className="size-5" />
           </div>
-          <DialogTitle className="text-xl font-bold text-slate-950">Add QuadQR to your home screen</DialogTitle>
-          <DialogDescription className="mt-2 text-sm leading-6 text-slate-500">
-            Open your browser menu and choose <strong className="font-semibold text-slate-800">Add to Home Screen</strong> or <strong className="font-semibold text-slate-800">Install app</strong>. On iPhone or iPad, use Share, then Add to Home Screen.
+          <DialogTitle className="text-xl font-bold text-foreground">Add QuadQR to your home screen</DialogTitle>
+          <DialogDescription className="mt-2 text-sm leading-6 text-muted-foreground">
+            Open your browser menu and choose <strong className="font-semibold text-foreground">Add to Home Screen</strong> or <strong className="font-semibold text-foreground">Install app</strong>. On iPhone or iPad, use Share, then Add to Home Screen.
           </DialogDescription>
         </DialogContent>
       </Dialog>

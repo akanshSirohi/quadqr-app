@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 export function Switch({ className, ...props }) {
   return (
     <SwitchPrimitive.Root
-      className={cn("peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full bg-slate-200 p-0.5 transition data-[state=checked]:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20 disabled:cursor-not-allowed disabled:opacity-50", className)}
+      data-slot="switch"
+      className={cn("peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border border-transparent bg-input p-0.5 shadow-xs transition data-[state=checked]:bg-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:cursor-not-allowed disabled:opacity-50", className)}
       {...props}
     >
-      <SwitchPrimitive.Thumb className="block size-5 rounded-full bg-white shadow-sm transition-transform data-[state=checked]:translate-x-5" />
+      <SwitchPrimitive.Thumb data-slot="switch-thumb" className="block size-5 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-5 dark:data-[state=checked]:bg-primary-foreground" />
     </SwitchPrimitive.Root>
   );
 }

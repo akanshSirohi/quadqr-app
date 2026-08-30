@@ -11,6 +11,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { PAYLOAD_TYPES, buildPayload } from "@/lib/payload";
 import { cn } from "@/lib/utils";
 
+const PRINT_PALETTE = { black: "#000000", white: "#ffffff", red: "#d71932", green: "#087f3e", blue: "#174ea6" };
+
 const STYLES = [
   { id: "classic", label: "Classic" },
   { id: "depth", label: "Depth" },
@@ -19,7 +21,7 @@ const STYLES = [
 ];
 
 function FieldLabel({ children }) {
-  return <label className="mb-2 block text-sm font-semibold text-slate-800">{children}</label>;
+  return <label className="mb-2 block text-sm font-semibold text-foreground">{children}</label>;
 }
 
 function PayloadFields({ type, values, setValues }) {
@@ -76,7 +78,11 @@ export default function GeneratorPanel() {
           imageSize: 900,
           quietZone: 2,
           style,
-          mode: outputMode,
+          // QuadQR print mode intentionally clamps the quiet zone to 4 modules.
+          // This consumer app keeps the requested 2-module quiet zone in both modes
+          // and applies the library's print-safe palette explicitly instead.
+          mode: "screen",
+          ...(outputMode === "print" ? { palette: PRINT_PALETTE } : {}),
           ...(logoDataUrl ? {
             logo: {
               source: logoDataUrl,
@@ -154,8 +160,8 @@ export default function GeneratorPanel() {
     <div className="grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
       <section className="soft-card rounded-3xl p-4 sm:p-6">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[.18em] text-slate-400">Create</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">What do you want to share?</h2>
+          <p className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground">Create</p>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">What do you want to share?</h2>
         </div>
 
         <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
@@ -163,7 +169,7 @@ export default function GeneratorPanel() {
             <button
               key={item.id}
               onClick={() => setType(item.id)}
-              className={cn("shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold transition", type === item.id ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}
+              className={cn("shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold transition", type === item.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground")}
             >
               {item.label}
             </button>
@@ -179,7 +185,7 @@ export default function GeneratorPanel() {
               <button
                 key={item.id}
                 onClick={() => setStyle(item.id)}
-                className={cn("rounded-xl border px-3 py-3 text-sm font-semibold transition", style === item.id ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300")}
+                className={cn("rounded-xl border px-3 py-3 text-sm font-semibold transition", style === item.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-border")}
               >
                 {item.label}
               </button>
@@ -190,46 +196,46 @@ export default function GeneratorPanel() {
         <div className="mt-7">
           <FieldLabel>Logo</FieldLabel>
           {!logoDataUrl ? (
-            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:bg-slate-100">
+            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/50 px-4 py-5 text-sm font-semibold text-muted-foreground transition hover:border-ring hover:bg-muted">
               <ImagePlus className="size-4" /> Add a logo
               <input type="file" accept="image/*" className="hidden" onChange={chooseLogo} />
             </label>
           ) : (
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-              <div className="checker-bg flex size-12 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/50 p-3">
+              <div className="checker-bg flex size-12 items-center justify-center overflow-hidden rounded-xl border border-border bg-background">
                 <img src={logoDataUrl} alt="Selected logo" className="h-full w-full object-contain" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-slate-900">Logo added</p>
-                <p className="text-xs text-slate-500">Size is chosen automatically</p>
+                <p className="text-sm font-semibold text-foreground">Logo added</p>
+                <p className="text-xs text-muted-foreground">Size is chosen automatically</p>
               </div>
               <Button variant="ghost" size="icon" onClick={() => setLogoDataUrl("")} aria-label="Remove logo"><X className="size-4" /></Button>
             </div>
           )}
           {logoDataUrl ? (
             <label className="mt-3 flex items-center justify-between gap-4 rounded-xl px-1 py-2">
-              <span><span className="block text-sm font-semibold text-slate-800">Clear background</span><span className="text-xs text-slate-500">Keeps the logo easy to see</span></span>
+              <span><span className="block text-sm font-semibold text-foreground">Clear background</span><span className="text-xs text-muted-foreground">Keeps the logo easy to see</span></span>
               <Switch checked={clearLogoBackground} onCheckedChange={setClearLogoBackground} />
             </label>
           ) : null}
         </div>
 
-        <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen} className="mt-6 border-t border-slate-200 pt-5">
-          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl py-2 text-left text-sm font-semibold text-slate-800">
+        <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen} className="mt-6 border-t border-border pt-5">
+          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl py-2 text-left text-sm font-semibold text-foreground">
             Advanced settings
             <ChevronDown className={cn("size-4 transition-transform", advancedOpen && "rotate-180")} />
           </CollapsibleTrigger>
           <CollapsibleContent className="pt-3">
-            <div className="space-y-4 rounded-2xl bg-slate-50 p-4">
+            <div className="space-y-4 rounded-2xl bg-muted/50 p-4">
               <label className="flex items-center justify-between gap-4">
-                <span><span className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">High density <Sparkles className="size-3.5" /></span><span className="mt-0.5 block text-xs leading-5 text-slate-500">Fits more data into the code. Best for sharp screens and good cameras.</span></span>
+                <span><span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">High density <Sparkles className="size-3.5" /></span><span className="mt-0.5 block text-xs leading-5 text-muted-foreground">Fits more data into the code. Best for sharp screens and good cameras.</span></span>
                 <Switch checked={highDensity} onCheckedChange={setHighDensity} />
               </label>
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-900">Output</p>
+                <p className="mb-2 text-sm font-semibold text-foreground">Output</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <button onClick={() => setOutputMode("screen")} className={cn("rounded-xl border px-3 py-2.5 text-sm font-semibold", outputMode === "screen" ? "border-slate-950 bg-white text-slate-950" : "border-transparent bg-slate-100 text-slate-500")}>Screen</button>
-                  <button onClick={() => setOutputMode("print")} className={cn("rounded-xl border px-3 py-2.5 text-sm font-semibold", outputMode === "print" ? "border-slate-950 bg-white text-slate-950" : "border-transparent bg-slate-100 text-slate-500")}>Print</button>
+                  <button onClick={() => setOutputMode("screen")} className={cn("rounded-xl border px-3 py-2.5 text-sm font-semibold", outputMode === "screen" ? "border-primary bg-background text-foreground" : "border-transparent bg-muted text-muted-foreground hover:text-foreground")}>Screen</button>
+                  <button onClick={() => setOutputMode("print")} className={cn("rounded-xl border px-3 py-2.5 text-sm font-semibold", outputMode === "print" ? "border-primary bg-background text-foreground" : "border-transparent bg-muted text-muted-foreground hover:text-foreground")}>Print</button>
                 </div>
               </div>
             </div>
@@ -240,22 +246,22 @@ export default function GeneratorPanel() {
       <aside className="soft-card lg:sticky lg:top-6 lg:h-fit rounded-3xl p-4 sm:p-6">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[.18em] text-slate-400">Preview</p>
-            <h2 className="mt-1 text-xl font-bold text-slate-950">Your QuadQR</h2>
+            <p className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground">Preview</p>
+            <h2 className="mt-1 text-xl font-bold text-foreground">Your QuadQR</h2>
           </div>
-          {rendering ? <Loader2 className="size-4 animate-spin text-slate-400" /> : null}
+          {rendering ? <Loader2 className="size-4 animate-spin text-muted-foreground" /> : null}
         </div>
 
-        <div className="checker-bg mt-5 flex aspect-square items-center justify-center overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 sm:p-8">
-          {previewSrc ? <img src={previewSrc} alt="Generated QuadQR preview" className="h-full w-full object-contain" /> : <div className="max-w-xs text-center text-sm leading-6 text-slate-400">Add content to see your QuadQR.</div>}
+        <div className="checker-bg mt-5 flex aspect-square items-center justify-center overflow-hidden rounded-3xl border border-border bg-background p-5 sm:p-8">
+          {previewSrc ? <img src={previewSrc} alt="Generated QuadQR preview" className="h-full w-full object-contain" /> : <div className="max-w-xs text-center text-sm leading-6 text-muted-foreground">Add content to see your QuadQR.</div>}
         </div>
-        {error ? <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
+        {error ? <p className="mt-3 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p> : null}
 
         <div className="mt-5 grid grid-cols-2 gap-2">
           <Button onClick={downloadPng} disabled={!svg}><Download className="size-4" />PNG</Button>
           <Button onClick={downloadSvg} disabled={!svg} variant="outline"><Download className="size-4" />SVG</Button>
         </div>
-        <p className="mt-3 text-center text-xs leading-5 text-slate-400">Optimized automatically with compression and a fixed quiet area.</p>
+        <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">Optimized automatically with compression and a fixed 2-module quiet area.</p>
       </aside>
     </div>
   );

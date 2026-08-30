@@ -28,19 +28,19 @@ export default function ScanResultDialog({ result, open, onOpenChange, onScanAga
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <div className="flex items-start gap-4">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
             <Icon className="size-5" />
           </div>
           <div className="min-w-0 flex-1 pr-2">
-            <p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">{result.label}</p>
-            <DialogTitle className="mt-1 text-xl font-bold text-slate-950">{result.title}</DialogTitle>
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-muted-foreground">{result.label}</p>
+            <DialogTitle className="mt-1 text-xl font-bold text-foreground">{result.title}</DialogTitle>
             <DialogDescription className="sr-only">Actions for the scanned QuadQR result.</DialogDescription>
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <p className="max-h-36 overflow-auto break-words text-sm font-medium leading-6 text-slate-900">{result.display || "Empty result"}</p>
-          {result.detail ? <p className="mt-2 max-h-28 whitespace-pre-wrap overflow-auto break-words text-sm leading-6 text-slate-500">{result.detail}</p> : null}
+        <div className="mt-5 rounded-2xl border border-border bg-muted/50 p-4">
+          <p className="max-h-36 overflow-auto break-words text-sm font-medium leading-6 text-foreground">{result.display || "Empty result"}</p>
+          {result.detail ? <p className="mt-2 max-h-28 whitespace-pre-wrap overflow-auto break-words text-sm leading-6 text-muted-foreground">{result.detail}</p> : null}
         </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">

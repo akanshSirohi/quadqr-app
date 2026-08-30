@@ -147,14 +147,14 @@ export default function ScannerPanel() {
       <section className="soft-card mx-auto max-w-4xl rounded-3xl p-4 sm:p-6">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[.18em] text-slate-400">Scan</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">Point your camera at a QuadQR</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Hold the code inside the camera view. The result opens automatically when it is found.</p>
+            <p className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground">Scan</p>
+            <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">Point your camera at a QuadQR</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Hold the code inside the camera view. The result opens automatically when it is found.</p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500"><ShieldCheck className="size-4" />Scanning stays on this device</div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><ShieldCheck className="size-4" />Scanning stays on this device</div>
         </div>
 
-        <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-3xl bg-slate-950 sm:aspect-video">
+        <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-3xl bg-black sm:aspect-video">
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
@@ -173,11 +173,11 @@ export default function ScannerPanel() {
             </div>
           ) : null}
           {cameraState === "starting" ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/25 backdrop-blur-[1px]"><Loader2 className="size-7 animate-spin text-white" /></div>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/25 backdrop-blur-[1px]"><Loader2 className="size-7 animate-spin text-white" /></div>
           ) : null}
         </div>
 
-        {error ? <p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">{error}</p> : null}
+        {error ? <p className="mt-4 rounded-2xl bg-destructive/10 px-4 py-3 text-sm leading-6 text-destructive">{error}</p> : null}
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
           <Button size="lg" onClick={startCamera} disabled={cameraState === "starting"}>

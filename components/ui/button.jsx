@@ -3,15 +3,15 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-slate-900/20 active:scale-[.98]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25 active:scale-[.98]",
   {
     variants: {
       variant: {
-        default: "bg-slate-950 text-white shadow-sm hover:bg-slate-800",
-        secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
-        outline: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
-        ghost: "text-slate-700 hover:bg-slate-100",
-        danger: "bg-red-600 text-white hover:bg-red-500"
+        default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        outline: "border border-input bg-background text-foreground shadow-xs hover:bg-accent hover:text-accent-foreground",
+        ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
+        destructive: "bg-destructive text-white shadow-sm hover:bg-destructive/90"
       },
       size: {
         default: "h-11 px-4",
@@ -24,6 +24,6 @@ const buttonVariants = cva(
   }
 );
 
-export const Button = React.forwardRef(function Button({ className, variant, size, ...props }, ref) {
-  return <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />;
-});
+export function Button({ className, variant, size, ...props }) {
+  return <button data-slot="button" className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}

@@ -1,6 +1,6 @@
 # QuadQR App
 
-A clean consumer-facing QuadQR generator and scanner built with Next.js, Tailwind CSS, shadcn-style Radix UI components, and `quadqr-js`.
+A clean consumer-facing QuadQR generator and scanner built with Next.js, Tailwind CSS, shadcn/ui-style components and semantic theme tokens, and `quadqr-js`.
 
 ## Included
 
@@ -8,8 +8,9 @@ A clean consumer-facing QuadQR generator and scanner built with Next.js, Tailwin
 - All four QuadQR styles: Classic, Depth, Soft, and Inset
 - Optional logo with automatic logo sizing and clear-background toggle
 - Automatic compression
-- Fixed 2-module quiet zone in the app UI
+- Fixed **2-module quiet zone in both Screen and Print output**
 - Advanced-only High Density Mode and Screen/Print output mode
+- Print output uses QuadQR's print-safe RGB palette while preserving the 2-module quiet zone
 - Camera scanner using QuadQR's live scanner
 - Finder-eye overlay with connected lines and no debug text
 - Image scanning for desktop/mobile fallback
@@ -17,8 +18,26 @@ A clean consumer-facing QuadQR generator and scanner built with Next.js, Tailwin
 - Installable PWA with service worker and home-screen icons
 - Static Next.js export for GitHub Pages
 - `gh-pages` deployment script and optional GitHub Actions workflow
+- Light/dark theme switch in the top bar with the preference saved locally
+- Raleway loaded from Google Fonts
 
 There are intentionally no signing, encryption, raw-key, or password controls in this app.
+
+## shadcn/ui and tweakcn themes
+
+The project includes `components.json` and uses shadcn semantic theme tokens throughout the UI instead of fixed Slate colors. The main theme variables live in `app/globals.css` under `:root` and `.dark`.
+
+This makes it straightforward to use a tweakcn theme later. Replace the theme variable values for tokens such as:
+
+- `--background` / `--foreground`
+- `--card` / `--card-foreground`
+- `--primary` / `--primary-foreground`
+- `--secondary` / `--secondary-foreground`
+- `--muted` / `--muted-foreground`
+- `--accent` / `--accent-foreground`
+- `--border`, `--input`, and `--ring`
+
+Keep the `@theme inline` mappings in place so Tailwind utilities such as `bg-primary`, `text-muted-foreground`, and `border-border` continue to follow the selected theme.
 
 ## Run locally
 
@@ -72,10 +91,14 @@ An optional workflow is included at `.github/workflows/deploy-pages.yml`. It run
 
 ## QuadQR dependency
 
-`package.json` uses the npm `latest` tag for `quadqr-js`, so a fresh install picks up the latest published QuadQR release. Commit the generated `package-lock.json` after your first `npm install` if you want production builds to stay pinned until you intentionally update dependencies.
+`package.json` uses the npm `latest` tag for `quadqr-js`, so a fresh install picks up the latest published QuadQR release. Commit the generated `package-lock.json` after your install if you want production builds to stay pinned until you intentionally update dependencies.
+
+### Why Print still uses a 2-module quiet zone
+
+QuadQR's library-level `mode: "print"` intentionally enforces a minimum 4-module quiet zone. This app has a different product requirement: the quiet zone must always remain 2 modules. Therefore the app renders through the normal renderer path with `quietZone: 2` and applies QuadQR's print-safe palette explicitly when **Print** is selected. This keeps the print-oriented colors without allowing the library to increase the quiet zone.
 
 ## PWA notes
 
-The service worker caches the app shell and assets as they are used. Once the site has been loaded successfully, supported browsers can install it from the browser install prompt or Add to Home Screen menu.
+The service worker caches the app shell and same-origin assets as they are used. Once the site has been loaded successfully, supported browsers can install it from the browser install prompt or Add to Home Screen menu.
 
 Camera scanning requires a secure context. GitHub Pages provides HTTPS automatically.
