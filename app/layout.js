@@ -1,5 +1,16 @@
 import "./globals.css";
+import { Geist, Geist_Mono } from "next/font/google";
 import { BASE_PATH } from "@/lib/base-path";
+
+const fontSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans"
+});
+
+const fontMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono"
+});
 
 export const metadata = {
   title: "QuadQR | Create & Scan",
@@ -45,7 +56,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
-      <body>{children}</body>
+      <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>{children}</body>
     </html>
   );
 }

@@ -157,35 +157,35 @@ export default function GeneratorPanel() {
   const previewSrc = svg ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}` : "";
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
-      <section className="soft-card rounded-3xl p-4 sm:p-6">
+    <div className="grid min-w-0 gap-4 lg:grid-cols-[1.05fr_.95fr] lg:gap-5">
+      <section className="soft-card min-w-0 rounded-2xl p-3.5 sm:rounded-3xl sm:p-6">
         <div>
           <p className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground">Create</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">What do you want to share?</h2>
+          <h2 className="mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">What do you want to share?</h2>
         </div>
 
-        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-5 grid grid-cols-3 gap-2 sm:mt-6 sm:grid-cols-5">
           {PAYLOAD_TYPES.map((item) => (
             <button
               key={item.id}
               onClick={() => setType(item.id)}
-              className={cn("shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold transition", type === item.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground")}
+              className={cn("min-h-10 rounded-xl px-2 py-2 text-sm font-semibold transition sm:px-4 sm:py-2.5", type === item.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground")}
             >
               {item.label}
             </button>
           ))}
         </div>
 
-        <div className="mt-6"><PayloadFields type={type} values={values} setValues={setValues} /></div>
+        <div className="mt-5 sm:mt-6"><PayloadFields type={type} values={values} setValues={setValues} /></div>
 
-        <div className="mt-7">
+        <div className="mt-6 sm:mt-7">
           <FieldLabel>Style</FieldLabel>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
             {STYLES.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setStyle(item.id)}
-                className={cn("rounded-xl border px-3 py-3 text-sm font-semibold transition", style === item.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-border")}
+                className={cn("min-h-11 rounded-xl border px-3 py-2.5 text-sm font-semibold transition sm:py-3", style === item.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-border")}
               >
                 {item.label}
               </button>
@@ -193,10 +193,10 @@ export default function GeneratorPanel() {
           </div>
         </div>
 
-        <div className="mt-7">
+        <div className="mt-6 sm:mt-7">
           <FieldLabel>Logo</FieldLabel>
           {!logoDataUrl ? (
-            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/50 px-4 py-5 text-sm font-semibold text-muted-foreground transition hover:border-ring hover:bg-muted">
+            <label className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/50 px-4 py-4 text-sm font-semibold text-muted-foreground transition hover:border-ring hover:bg-muted sm:py-5">
               <ImagePlus className="size-4" /> Add a logo
               <input type="file" accept="image/*" className="hidden" onChange={chooseLogo} />
             </label>
@@ -221,7 +221,7 @@ export default function GeneratorPanel() {
         </div>
 
         <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen} className="mt-6 border-t border-border pt-5">
-          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl py-2 text-left text-sm font-semibold text-foreground">
+          <CollapsibleTrigger className="flex min-h-11 w-full items-center justify-between rounded-xl py-2 text-left text-sm font-semibold text-foreground">
             Advanced settings
             <ChevronDown className={cn("size-4 transition-transform", advancedOpen && "rotate-180")} />
           </CollapsibleTrigger>
@@ -243,21 +243,21 @@ export default function GeneratorPanel() {
         </Collapsible>
       </section>
 
-      <aside className="soft-card lg:sticky lg:top-6 lg:h-fit rounded-3xl p-4 sm:p-6">
+      <aside className="soft-card min-w-0 rounded-2xl p-3.5 sm:rounded-3xl sm:p-6 lg:sticky lg:top-6 lg:h-fit">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground">Preview</p>
-            <h2 className="mt-1 text-xl font-bold text-foreground">Your QuadQR</h2>
+            <h2 className="mt-1 text-lg font-bold text-foreground sm:text-xl">Your QuadQR</h2>
           </div>
           {rendering ? <Loader2 className="size-4 animate-spin text-muted-foreground" /> : null}
         </div>
 
-        <div className="checker-bg mt-5 flex aspect-square items-center justify-center overflow-hidden rounded-3xl border border-border bg-background p-5 sm:p-8">
+        <div className="checker-bg mx-auto mt-4 flex aspect-square w-full max-w-[22rem] items-center justify-center overflow-hidden rounded-2xl border border-border bg-background p-4 sm:mt-5 sm:max-w-none sm:rounded-3xl sm:p-8">
           {previewSrc ? <img src={previewSrc} alt="Generated QuadQR preview" className="h-full w-full object-contain" /> : <div className="max-w-xs text-center text-sm leading-6 text-muted-foreground">Add content to see your QuadQR.</div>}
         </div>
         {error ? <p className="mt-3 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p> : null}
 
-        <div className="mt-5 grid grid-cols-2 gap-2">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5">
           <Button onClick={downloadPng} disabled={!svg}><Download className="size-4" />PNG</Button>
           <Button onClick={downloadSvg} disabled={!svg} variant="outline"><Download className="size-4" />SVG</Button>
         </div>

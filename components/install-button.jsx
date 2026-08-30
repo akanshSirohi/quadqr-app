@@ -46,9 +46,10 @@ export default function InstallButton() {
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={install} className="bg-background/70">
+      <Button variant="outline" size="sm" onClick={install} className="bg-background/70 px-3">
         <Download className="size-3.5" />
-        Install app
+        <span className="hidden min-[360px]:inline">Install app</span>
+        <span className="min-[360px]:hidden">Install</span>
       </Button>
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
         <DialogContent>

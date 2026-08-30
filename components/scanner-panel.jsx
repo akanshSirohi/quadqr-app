@@ -144,17 +144,17 @@ export default function ScannerPanel() {
 
   return (
     <>
-      <section className="soft-card mx-auto max-w-4xl rounded-3xl p-4 sm:p-6">
+      <section className="soft-card mx-auto min-w-0 max-w-4xl rounded-2xl p-3.5 sm:rounded-3xl sm:p-6">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground">Scan</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">Point your camera at a QuadQR</h2>
+            <h2 className="mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">Point your camera at a QuadQR</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Hold the code inside the camera view. The result opens automatically when it is found.</p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><ShieldCheck className="size-4" />Scanning stays on this device</div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><ShieldCheck className="size-4 shrink-0" />Scanning stays on this device</div>
         </div>
 
-        <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-3xl bg-black sm:aspect-video">
+        <div className="relative mt-5 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black sm:mt-6 sm:aspect-video sm:rounded-3xl">
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
@@ -165,7 +165,7 @@ export default function ScannerPanel() {
           <canvas ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" />
           {!isLive ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-              <div className="flex size-16 items-center justify-center rounded-3xl bg-white/10 text-white ring-1 ring-white/15">
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-white/15 sm:size-16 sm:rounded-3xl">
                 <ScanLine className="size-7" />
               </div>
               <p className="mt-4 text-base font-semibold text-white">Ready to scan</p>
@@ -180,11 +180,11 @@ export default function ScannerPanel() {
         {error ? <p className="mt-4 rounded-2xl bg-destructive/10 px-4 py-3 text-sm leading-6 text-destructive">{error}</p> : null}
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <Button size="lg" onClick={startCamera} disabled={cameraState === "starting"}>
+          <Button size="lg" onClick={startCamera} disabled={cameraState === "starting"} className="text-sm sm:text-base">
             {cameraState === "scanning" ? <RefreshCw className="size-4" /> : <Camera className="size-4" />}
             {cameraState === "scanning" ? "Restart camera" : "Start camera"}
           </Button>
-          <Button size="lg" variant="outline" onClick={() => fileRef.current?.click()} disabled={imageScanning}>
+          <Button size="lg" variant="outline" onClick={() => fileRef.current?.click()} disabled={imageScanning} className="text-sm sm:text-base">
             {imageScanning ? <Loader2 className="size-4 animate-spin" /> : <ImageUp className="size-4" />}
             Scan an image
           </Button>
