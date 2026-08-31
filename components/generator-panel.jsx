@@ -78,8 +78,8 @@ export default function GeneratorPanel() {
         const nextSvg = renderToSVG(code, {
           imageSize,
           quietZone: 2,
-          style,
           mode: outputMode,
+          ...(!highDensity ? { style } : {}),
           ...(logoDataUrl ? {
             logo: {
               source: logoDataUrl,
@@ -173,20 +173,22 @@ export default function GeneratorPanel() {
 
         <div className="mt-5 sm:mt-6"><PayloadFields type={type} values={values} setValues={setValues} /></div>
 
-        <div className="mt-6 sm:mt-7">
-          <FieldLabel>Style</FieldLabel>
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-            {STYLES.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setStyle(item.id)}
-                className={cn("min-h-11 rounded-xl border px-3 py-2.5 text-sm font-semibold transition sm:py-3", style === item.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-border")}
-              >
-                {item.label}
-              </button>
-            ))}
+        {!highDensity ? (
+          <div className="mt-6 sm:mt-7">
+            <FieldLabel>Style</FieldLabel>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+              {STYLES.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setStyle(item.id)}
+                  className={cn("min-h-11 rounded-xl border px-3 py-2.5 text-sm font-semibold transition sm:py-3", style === item.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-border")}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div className="mt-6 sm:mt-7">
           <FieldLabel>Logo</FieldLabel>

@@ -5,7 +5,7 @@ A clean consumer-facing QuadQR generator and scanner built with Next.js, Tailwin
 ## Included
 
 - Generator for links, plain text, email, SMS, and phone numbers
-- All four QuadQR styles: Classic, Depth, Soft, and Inset
+- All four QuadQR styles: Classic, Depth, Soft, and Inset (hidden and disabled in High Density Mode)
 - Optional logo with automatic logo sizing and clear-background toggle
 - Automatic compression
 - Fixed **2-module quiet zone in both Screen and Print output**
