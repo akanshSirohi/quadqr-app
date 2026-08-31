@@ -18,7 +18,7 @@
     "clsx": "latest",
     "lucide-react": "latest",
     "next": "latest",
-    "quadqr-js": "latest",
+    "quadqr-js": "^1.5.4",
     "react": "latest",
     "react-dom": "latest",
     "tailwind-merge": "latest"

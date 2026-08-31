@@ -11,7 +11,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { PAYLOAD_TYPES, buildPayload } from "@/lib/payload";
 import { cn } from "@/lib/utils";
 
-const PRINT_PALETTE = { black: "#000000", white: "#ffffff", red: "#d71932", green: "#087f3e", blue: "#174ea6" };
 const QR_SIZE_OPTIONS = [512, 720, 900, 1200, 1600];
 
 const STYLES = [
@@ -50,7 +49,7 @@ export default function GeneratorPanel() {
   const [type, setType] = useState("link");
   const [values, setValues] = useState({ url: "", text: "", email: "", subject: "", message: "", phone: "", smsMessage: "" });
   const [style, setStyle] = useState("classic");
-  const [imageSize, setImageSize] = useState(900);
+  const [imageSize, setImageSize] = useState(720);
   const [highDensity, setHighDensity] = useState(false);
   const [outputMode, setOutputMode] = useState("screen");
   const [clearLogoBackground, setClearLogoBackground] = useState(true);
@@ -80,11 +79,7 @@ export default function GeneratorPanel() {
           imageSize,
           quietZone: 2,
           style,
-          // QuadQR print mode intentionally clamps the quiet zone to 4 modules.
-          // This consumer app keeps the requested 2-module quiet zone in both modes
-          // and applies the library's print-safe palette explicitly instead.
-          mode: "screen",
-          ...(outputMode === "print" ? { palette: PRINT_PALETTE } : {}),
+          mode: outputMode,
           ...(logoDataUrl ? {
             logo: {
               source: logoDataUrl,

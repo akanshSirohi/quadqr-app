@@ -9,8 +9,9 @@ A clean consumer-facing QuadQR generator and scanner built with Next.js, Tailwin
 - Optional logo with automatic logo sizing and clear-background toggle
 - Automatic compression
 - Fixed **2-module quiet zone in both Screen and Print output**
-- Advanced-only High Density Mode and Screen/Print output mode
-- Print output uses QuadQR's print-safe RGB palette while preserving the 2-module quiet zone
+- Advanced-only High Density Mode, output size, and Screen/Print output mode
+- 720 px default export size with 512, 720, 900, 1200, and 1600 px options
+- Native QuadQR Screen/Print rendering while preserving the requested 2-module quiet zone
 - Camera scanner using QuadQR's live scanner
 - Finder-eye overlay with connected lines and no debug text
 - Image scanning for desktop/mobile fallback
@@ -91,11 +92,11 @@ An optional workflow is included at `.github/workflows/deploy-pages.yml`. It run
 
 ## QuadQR dependency
 
-`package.json` uses the npm `latest` tag for `quadqr-js`, so a fresh install picks up the latest published QuadQR release. Commit the generated `package-lock.json` after your install if you want production builds to stay pinned until you intentionally update dependencies.
+The app requires `quadqr-js` 1.5.4 or newer within the current major version. The committed `package-lock.json` pins installs to the verified release until dependencies are intentionally updated.
 
-### Why Print still uses a 2-module quiet zone
+### Screen and Print quiet zones
 
-QuadQR's library-level `mode: "print"` intentionally enforces a minimum 4-module quiet zone. This app has a different product requirement: the quiet zone must always remain 2 modules. Therefore the app renders through the normal renderer path with `quietZone: 2` and applies QuadQR's print-safe palette explicitly when **Print** is selected. This keeps the print-oriented colors without allowing the library to increase the quiet zone.
+The app passes `quietZone: 2` and the selected Screen/Print mode directly to QuadQR. Current QuadQR releases apply the requested quiet zone consistently in both modes, so the app does not crop, resize, or manually replace the library's output palette.
 
 ## PWA notes
 
