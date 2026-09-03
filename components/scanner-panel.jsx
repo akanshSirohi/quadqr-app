@@ -10,6 +10,8 @@ import { classifyPayload } from "@/lib/payload";
 export default function ScannerPanel() {
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
+  const cameraSessionRef = useRef(0);
+  const cameraStartRef = useRef(null);
   const fileRef = useRef(null);
   const [cameraState, setCameraState] = useState("idle");
   const [error, setError] = useState("");
@@ -20,6 +22,7 @@ export default function ScannerPanel() {
   useEffect(() => () => stopScanner(), []);
 
   function stopScanner() {
+    cameraSessionRef.current += 1;
     try { scannerRef.current?.stop?.(); } catch {}
     scannerRef.current = null;
     const stream = videoRef.current?.srcObject;
@@ -28,10 +31,9 @@ export default function ScannerPanel() {
     setCameraState("idle");
   }
 
-  function handleDecoded(decoded) {
+  function handleDecoded(decoded, cameFromCamera = Boolean(scannerRef.current)) {
     const text = decoded?.text ?? (decoded?.payload instanceof Uint8Array ? new TextDecoder().decode(decoded.payload) : decoded?.payload ?? "");
     const parsed = classifyPayload(text);
-    const cameFromCamera = Boolean(scannerRef.current);
     setScanResult(parsed);
     setResultOpen(true);
     try { scannerRef.current?.stop?.(); } catch {}
@@ -43,20 +45,45 @@ export default function ScannerPanel() {
     setError("");
     setResultOpen(false);
     stopScanner();
+    const session = cameraSessionRef.current;
     setCameraState("starting");
     await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    const pendingStart = cameraStartRef.current;
+    if (pendingStart) {
+      try { await pendingStart; } catch {}
+    }
+    if (cameraSessionRef.current !== session) return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const startPromise = startCameraScanner(video, {
+      cameraWorker: true,
+      onResult: (decoded) => {
+        if (cameraSessionRef.current !== session) return;
+        cameraSessionRef.current += 1;
+        handleDecoded(decoded, true);
+      }
+    });
+    cameraStartRef.current = startPromise;
+
     try {
-      const scanner = await startCameraScanner(videoRef.current, {
-        cameraWorker: true,
-        onResult: handleDecoded
-      });
+      const scanner = await startPromise;
+      if (cameraSessionRef.current !== session) {
+        try { scanner.stop?.(); } catch {}
+        return;
+      }
       scannerRef.current = scanner;
       setCameraState("scanning");
     } catch (err) {
+      if (cameraSessionRef.current !== session) return;
       setCameraState("idle");
       setError(err?.message?.toLowerCase().includes("permission")
         ? "Camera access was blocked. Allow camera access in your browser and try again."
         : "The camera could not be started. You can still scan an image instead.");
+    } finally {
+      if (cameraStartRef.current === startPromise) cameraStartRef.current = null;
     }
   }
 
