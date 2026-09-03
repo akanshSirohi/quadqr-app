@@ -1,0 +1,1 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,16333,e=>{e.q("/quadqr-app/_next/static/media/camera-scanner-worker.1iuip3nbmm-i6.js")}]);
