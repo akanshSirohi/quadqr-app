@@ -1,4 +1,4 @@
-const CACHE_NAME = "quadqr-app-v2";
+const CACHE_NAME = "quadqr-app-v3";
 
 function inScopeUrl(path = "") {
   return new URL(path, self.registration.scope).toString();
