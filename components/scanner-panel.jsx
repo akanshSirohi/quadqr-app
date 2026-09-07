@@ -70,6 +70,18 @@ export default function ScannerPanel() {
     if (updateState) setCameraStateSafe("idle");
   }
 
+  function pauseCameraPreview() {
+    const video = videoRef.current;
+    if (!video) return;
+    try { video.pause?.(); } catch {}
+  }
+
+  async function resumeCameraPreview() {
+    const video = videoRef.current;
+    if (!video) return;
+    try { await video.play?.(); } catch {}
+  }
+
   function handleDecoded(decoded) {
     const text = decoded?.text
       ?? (decoded?.payload instanceof Uint8Array
@@ -83,9 +95,12 @@ export default function ScannerPanel() {
     if (cameraSessionRef.current !== session || resultHandledRef.current) return;
     resultHandledRef.current = true;
 
-    // Keep the camera stream alive. Reusing it is much more reliable than
-    // tearing down and reacquiring getUserMedia after every successful scan.
+    // Pause both scanning and the <video> element. QuadQR's pause() stops
+    // scanner work, while video.pause() freezes the visual preview. The
+    // underlying stream stays owned by the existing scanner so Resume camera
+    // can continue without reacquiring getUserMedia.
     try { scannerRef.current?.pause?.(); } catch {}
+    pauseCameraPreview();
     handleDecoded(decoded);
     setCameraStateSafe("found");
   }
@@ -99,6 +114,7 @@ export default function ScannerPanel() {
     if (!forceRestart && scannerRef.current && cameraState === "found") {
       resultHandledRef.current = false;
       try {
+        await resumeCameraPreview();
         scannerRef.current.resume?.();
         setCameraStateSafe("scanning");
         return;
@@ -161,6 +177,7 @@ export default function ScannerPanel() {
 
       if (resultArrivedBeforeReady || resultHandledRef.current) {
         try { scanner.pause?.(); } catch {}
+        pauseCameraPreview();
         setCameraStateSafe("found");
       } else {
         setCameraStateSafe("scanning");
@@ -272,6 +289,11 @@ export default function ScannerPanel() {
           ) : null}
           {cameraState === "starting" ? (
             <div className="absolute inset-0 flex items-center justify-center bg-black/25 backdrop-blur-[1px]"><Loader2 className="size-7 animate-spin text-white" /></div>
+          ) : null}
+          {cameraState === "found" ? (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/55 to-transparent px-4 pb-4 pt-10">
+              <span className="rounded-full bg-black/55 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/15 backdrop-blur-sm">Camera paused</span>
+            </div>
           ) : null}
         </div>
 
