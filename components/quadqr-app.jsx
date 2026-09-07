@@ -12,7 +12,15 @@ import { BASE_PATH } from "@/lib/base-path";
 export default function QuadQRApp() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
-    const onLoad = () => navigator.serviceWorker.register(`${BASE_PATH}/sw.js`, { scope: `${BASE_PATH}/` }).catch(() => {});
+    const onLoad = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register(`${BASE_PATH}/sw.js`, {
+          scope: `${BASE_PATH}/`,
+          updateViaCache: "none"
+        });
+        registration.update().catch(() => {});
+      } catch {}
+    };
     if (document.readyState === "complete") onLoad();
     else window.addEventListener("load", onLoad, { once: true });
     return () => window.removeEventListener("load", onLoad);

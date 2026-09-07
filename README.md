@@ -92,7 +92,7 @@ An optional workflow is included at `.github/workflows/deploy-pages.yml`. It run
 
 ## QuadQR dependency
 
-The app requires `quadqr-js` 1.5.4 or newer within the current major version. The committed `package-lock.json` pins installs to the verified release until dependencies are intentionally updated.
+The app is pinned to `quadqr-js` 1.5.7. The camera UI uses the library's abortable lifecycle plus continuous pause/resume flow so repeated scans do not needlessly reacquire the camera.
 
 ### Screen and Print quiet zones
 
